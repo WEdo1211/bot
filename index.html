@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Availability Update</title>
+</head>
+
+<body>
+    <div id="productStatus">Please wait...</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        const chatId = -4197437401;
+        const botToken = '6764699598:AAEcIs4l65TaJaM5aAEY1S9Pzmwi7fKEHoE';
+        const productId = 'https://www.dzrt.com/ar/icy-rush.html';
+        const message = encodeURIComponent('🔔 اعلاآن عن منتج 🔔\n---- يوجد منتج متوفر ----\n\nطلب جديد من هنا : ' + productId + '\n\nيمكنك الدخول لحسابك من هنا : https://2u.pw/45ugaWdX\n\nالذهاب الى الدفع مباشرة اذا كانت المنتجات فالسلة مسبقاً : https://2u.pw/kfhDGS8D');
+
+        function getProductStatus() {
+            axios.get(productId)
+                .then(function(response) {
+                    const productAvailable = response.data.includes('سيتم توفيرها في المخزون قريباً');
+                    if (productAvailable) {
+                        axios.get('https://api.telegram.org/bot' + botToken + '/sendMessage?chat_id=' + chatId + '&text=' + message);
+                        document.getElementById('productStatus').innerHTML = 'The product is now available!';
+                    } else {
+                        document.getElementById('productStatus').innerHTML = 'Product is not available yet. Checking again in 4 seconds...';
+                        setTimeout(getProductStatus, 4000); // Update the page every 4 seconds
+                    }
+                })
+                .catch(function(error) {
+                    console.log(error);
+                });
+        }
+
+        getProductStatus();
+    </script>
+</body>
+
+</html>
